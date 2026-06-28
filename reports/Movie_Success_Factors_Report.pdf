@@ -1,0 +1,228 @@
+Abstract 
+This project investigates the factors affecting movie revenue, including production budget, 
+cast popularity, ratings, and release season. The aim is to identify which factor affects 
+revenue the most, compare the movie revenue achieved by each release season, and 
+detect patterns and agreements across factors. A dataset collected from Box Office Mojo, 
+IMDb, and TMDB of 5400 records and 13 features has been used as the primary source of 
+data. Exploratory data analysis, correlation analysis, feature engineering, and predictive 
+models have been applied and used to reach the desired results. The results show that 
+production budget was the strongest predictor of revenue while ratings had a weak effect 
+on revenue. Release seasons had a small, noticeable effect on movie revenue, with 
+summer movies performing the best overall. Critics and audiences tended to have an 
+agreement on movie ratings. Overall, movie success is mainly driven by financial 
+investment along with some other small affecting factors. 
+Keywords: Movie revenue prediction; machine learning; production budget; critics’ ratings; 
+audience ratings; IMDb ratings; release season; feature engineering 
+1. Introduction 
+There are many factors affecting a movie’s performance. These factors can include 
+production budget, cast popularity, ratings, and release season. For example, the movie 
+‘Project Hail Mary’ gained over 500 million dollars after having a production budget of 
+around 200 million dollars, while other movies failed due to low production budgets. 
+Accordingly, this project will analyze the correlation between each factor and box office 
+success and detect patterns across these factors. 
+2. Problem Statement 
+However, some factors have a larger effect on the movie’s success. As a result, it remains 
+unclear how significant the impact of each factor is on box office success. Additionally, 
+some factors include distinct categories with different patterns that affect box office 
+success, such as audience ratings and critics’ ratings. Therefore, this project will compare 
+the effect of each factor on box office success across genres. 
+3. Research Questions 
+• What factors most strongly predict box office success — budget, cast popularity, or 
+IMDb ratings? 
+• Do movies released in summer perform better financially than those in winter? 
+• Is there a significant difference between critics’ and audience ratings across 
+genres? 
+4. Dataset Overview 
+• Dataset name: Movies Success Factors Dataset. 
+• Sources: Box Office Mojo, IMDb, and TMDB. 
+• Number of records: 5400 records. 
+• Number of features: 13 features. 
+• Description: Each row contains the movie title, year it was released in, audience 
+rating obtained from IMDb, critics’ rating, season it was released in, budget, genres, 
+an engineered cast popularity score, an indicator for whether the movie had a 
+critics’ rating or not, log-scaled revenue and budget, and a revenue class of high or 
+low. 
+• Key variables: Revenue, ratings, season, budget, cast popularity, and revenue class. 
+5. Data Collection Method 
+Most of the data has been scraped from Box Office Mojo and IMDb’s websites. Since most 
+of the pages on these websites use dynamic tables, the data was scraped through a locally 
+downloaded version of the websites. However, Box Office Mojo’s website did not use 
+dynamic tables for the season of each movie. This allowed the direct scraping of the 
+website to collect the season’s data for each movie. For the remaining data, a Kaggle 
+dataset was used and merged. 
+6. Sampling Criteria 
+Due to time, computational efficiency, and bias constraints, a time-based filtering for the 
+selection of movies has been applied. Only movies released in the 2000s were included in 
+the dataset. 
+• Time constraints: It is extremely difficult to scrape the data for each movie ever 
+released in a short period of time. 
+• Computational efficiency constraints: Due to the alternative approach of 
+downloading a local version of the website, it is extremely difficult to download each 
+page of each year on the websites of Box Office Mojo and IMDb. 
+• Bias constraints: Due to inflation, it is unfair to compare the revenues of movies 
+released before and after the 2000s. 
+7. Data Preprocessing 
+7.1 Null Value Handling 
+• Genres: Each missing genre value was imputed with the mode. 
+• Audience/IMDb rating, cast popularity score, and budget: A temporary revenue bin 
+column was created with 5 bins. Each missing rating, cast popularity, and budget 
+value was then imputed with the median of its bin. 
+• Season: A new categorical label, unknown, was created and used. 
+• Critics’ rating: A new row has been created to indicate whether a movie is missing 
+the critics’ rating or not. Additionally, null values were imputed with the median of 
+their revenue bin. 
+7.2 Duplicate Handling 
+There were no duplicates in the dataset after the data collection process. 
+7.3 Outliers Handling 
+The outliers were detected by applying the following calculation process: 
+• The upper and lower quartiles were identified and saved. 
+• The interquartile range was calculated and stored. 
+• The lower value was calculated by subtracting the lower quartile by 1.5 and 
+multiplying the result by the interquartile range. 
+• Similarly, the upper value was calculated by adding the upper quartile by 1.5 and 
+multiplying the result by the interquartile range. 
+• The outliers were then detected by finding the values that were lower than the lower 
+value or higher than the upper value. 
+After detecting the outliers for the budget and revenue, they were kept as they were since it 
+is possible that these outliers were blockbuster movies or movies with a high production 
+budget. However, two new log-scaled rows of the revenue and budget were created to 
+reduce their impact and compress them. 
+7.4 Data Transformation 
+• Cast popularity score: The popularity score of an actor has been calculated by 
+dividing the movie’s IMDb rating by the number of actors and adding that number to 
+the actor’s score. The movie’s cast popularity score is then calculated by computing 
+the average of the cast’s total popularity score. 
+• Seasons: The movie’s release season was obtained through a function that returned 
+the value ‘winter’ for each movie released between December and February, the 
+value ‘spring’ for each movie released between March and May, the value ‘summer’ 
+for each movie released between June and August, and the value ‘fall’ for each 
+movie released between September and November. 
+• Revenue class: The revenue class of a movie was considered ‘high’ if the movie 
+exceeded the median of all revenues and considered ‘low’ if the movie was below 
+the median. 
+8. Exploratory Data Analysis 
+8.1 Univariate Analysis 
+• Revenue histogram and log revenue histogram: A histogram that included the 
+frequency of each movie’s revenue was used to find the mode of revenue and the 
+distribution of revenue skewness. Since the data was right-skewed, it could be 
+inferred that most movies earn low to moderate revenue. Similarly, another 
+histogram was also used for the log revenue to reduce the outliers’ impact. 
+Additionally, this served as a visualization method for the outliers’ influence. 
+• Number of movies per season bar graph: A bar graph was used to find the number of 
+movies for each season collected in the dataset. This acted as a preliminary 
+visualization before making conclusions on the revenue by season since some 
+seasons may have more movies. All of the seasons had around the same number of 
+movies, which ensured data balance. 
+• Critics’ rating and audience rating difference histogram: A histogram of the 
+difference between the critics’ rating and audience rating was used to clarify how 
+much critics and audiences disagree. The histogram proved that both the critics and 
+audience agreed on the rating of most movies. However, in some movies there was a 
+large difference between their ratings. Additionally, since the distribution was 
+centered near zero, it could be inferred that there was a strong agreement overall. 
+8.2 Bivariate Analysis 
+• Critics’ rating and audience rating correlation heatmap: A heatmap representing the 
+correlation between the critics’ ratings and audience ratings was used to visualize 
+the strength and direction of the relationship between them. Since the correlation 
+coefficient was 0.64, there was a strong agreement between the critics and the 
+audiences for most of the movie’s ratings. 
+• Budget and revenue scatter plot: A scatter plot of all the movies’ budgets and 
+revenues was used to visualize the relationship between the production budget and 
+revenue. Since the scatter points tended to move upwards, it was inferred that 
+movies with larger production budgets had more revenue. Additionally, the log
+scaled revenue was used in a different scatter plot to reduce the outliers’ impact. 
+• IMDb Rating and revenue scatter plot and regression line: A regression line plotted 
+on a scatter plot of all the movies’ IMDb ratings and revenue indicated that there 
+was no meaningful linear relationship between IMDb ratings and revenue due to a 
+barely positive slope and a noisy scatter plot. Therefore, it could be concluded that 
+the movie rating has no effect on its revenue. 
+• Cast popularity and revenue scatter plot and regression line: Similarly, it was 
+inferred that the cast popularity has no influence on the movie’s revenue due to a 
+noisy scatter plot and weak linear relationship. 
+• Average revenue by season bar graph: A bar graph of the average revenue by each 
+season was used to avoid the unequal group bias of a total revenue bar graph and 
+visualize which season had better-performing movies. The graph showed that 
+summer movies had the highest average revenue, indicating that movies released in 
+the summer usually perform better than those released in any other season. 
+• Season and revenue box plot: A box plot of the revenue by each season was used to 
+compare the statistics of each season’s revenue, such as the season’s median 
+revenue, quartiles, and outliers. Through the visualization of the graph, it could be 
+inferred that summer movies have the most consistent revenues. Additionally, 
+summer movies had higher median revenue and a larger upper quantile than winter 
+movies, implying that summer movies perform better. However, winter movies had 
+larger outliers than summer movies, with a movie that performed better than any 
+other summer movie. Moreover, a log-scaled version of the plot was created to avoid 
+the outliers’ effect. 
+• Season and revenue class bar graph: A bar graph of each season’s count of high
+revenue and low-revenue movies was used to compare success frequency across 
+seasons. Since winter had the most movies in the dataset, more winter movies 
+succeeded than any other seasons’ movies, including summer movies. However, 
+the ratio between movie success and failure was higher in summer movies than in 
+winter movies; summer movies had way fewer failures than winter movies. 
+8.3 Multivariate Analysis 
+• Revenue, budget, rating, and cast popularity correlation heatmap: A heatmap 
+representing the correlation between the movies’ budget, rating, cast popularity, 
+and revenue was used to identify which factors directly affect revenue the most. 
+Through the analysis, it was concluded that budget affects revenue the most due to 
+the high coefficient of correlation between them. 
+• Revenue, budget, rating, and cast popularity scatterplot matrix: A scatterplot matrix 
+of multiple variables was used to show their relationship with each other. The 
+scatterplot matrix proved that the budget was the highest affecting factor to the 
+movie’s revenue because of their positive relationship and slope. 
+9. Machine Learning Model 
+9.1 Model Selection 
+• Random forest model: A random forest model was used as a feature importance 
+tool to rank which factor affects revenue the most: budget, cast popularity, or IMDb 
+rating. This specific model was selected for this task because it automatically 
+calculates which variables contribute the most to predictions. Additionally, it 
+handles nonlinear relationships, which is a requirement for this task.  
+• Classification model: Since the target feature is categorical, a classification model 
+was selected to predict the revenue class of a movie based on its release season. 
+• K-Means clustering model: To discover patterns for unlabeled data, a clustering 
+model is usually used. Therefore, a k-means clustering model was used to identify 
+rating patterns between critics and audiences. 
+9.2 Model Training 
+Each model was trained using a train-test split method: 80% of the dataset was used to 
+train the model, and 20% of the dataset was used to test the model. However, the 
+classification model needed an initial setup; the seasons column had to be split into 5 
+columns, including each season as a unique column and an ‘unknown’ season for the 
+movies with a null season value. Additionally, the first season column was ignored as a 
+method to prevent multicollinearity and optimize the model. 
+9.3 Model Evaluation 
+• Random forest model: An R² score was used to measure the proportion of variance 
+in the target variable. The R² score indicated that approximately 60% of movie 
+revenue variance is explained by the budget, cast popularity, or IMDb rating. 
+• Classification model: An accuracy score was used to evaluate the classification 
+model’s accuracy. The accuracy score measured the proportion of correctly 
+predicted movies. The model achieved an accuracy score of approximately 75%, 
+indicating that around 75% of the movies were correctly predicted. 
+• K-Means clustering model: For clustering, a visual approach was used for 
+evaluation. A scatter plot was used to inspect whether clusters were near or 
+separated. Since the clusters were close to each other, it could be inferred that the 
+critics’ and audiences’ ratings were closely related. 
+10. Results 
+• Budget was the strongest indicator of revenue, with a coefficient of correlation of 
+0.71. 
+• Ratings have a weak effect on movie revenue. Although some highly rated movies 
+have high revenues, IMDb ratings and movie revenue had a coefficient of correlation 
+of 0.19. 
+• Seasons have a mild but noticeable effect on movie revenue; summer movies have 
+higher average revenue than other seasons. Additionally, summer movies have 
+higher median revenue and more consistent performances. In spite of having the 
+greatest number of high-revenue movies, winter had more variability and failures 
+than any other season. 
+• Critics and audiences tend to agree on the rating of most movies, with a coefficient 
+of correlation of 0.64. 
+11. Conclusion and Recommendations 
+Throughout this project, the correlation between each factor and movie revenue has been 
+evaluated, patterns have been detected, and several findings have been identified. Budget 
+had the strongest relationship with movie revenue, making it the best predictor of revenue. 
+Conversely, ratings had a weak impact on movie revenue, and seasons had a small, 
+considerable effect. Movies released in the summer were proven to have performed better 
+than those released in winter; summer movies had a higher average revenue and more 
+consistent performances. Critics and audiences agreed on the ratings of most movies, with 
+some extremely rare cases of disagreement; a strong positive relationship between critics’ 
+ratings and audiences’ ratings was identified. Therefore, it could be concluded that movie 
+success is affected by multiple factors but dominated by production budget. As a result, it 
+is recommended that movie producers should prioritize movie budget over other revenue
+affecting factors. Additionally, marketing strategies should be focused on visibility rather 
+than aiming for higher ratings since ratings have a weak effect on movie revenue. 
